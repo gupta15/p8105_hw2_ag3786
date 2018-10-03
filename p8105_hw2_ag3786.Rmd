@@ -1,8 +1,33 @@
 ---
-title: "p8105_hw2_ag3786"
+title: "Homework 2"
+author: "Aakriti Gupta"
+date: 2018-10-03
 output: github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+```{r}
+library(tidyverse)
+```
+
+## **Problem 1**
+### Import and clean the CSV
+ 
+```{r}
+nyc_transit = read_csv(file = "./data/NYC_Transit_Data.csv")
+nyc_transit = janitor::clean_names(nyc_transit)
+```
+ 
+ 
+#### Looking at the dataset to make sure it is imported correctly:
+
+```{r}
+head(nyc_transit)
+tail(nyc_transit)
+skimr::skim(nyc_transit)
+```
+
+ 
