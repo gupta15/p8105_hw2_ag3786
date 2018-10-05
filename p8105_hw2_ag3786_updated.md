@@ -130,3 +130,17 @@ nyc_transit_tidy %>%
     ##  9 A          8 Avenue        34th St                      
     ## 10 A          8 Avenue        42nd St                      
     ## # ... with 50 more rows
+
+**Problem 2**
+-------------
+
+### *Importing and cleaning the trash wheel sheet*
+
+``` r
+trash_wheel = readxl::read_excel(path = "./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 1, range = "A2:N258") %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster)) %>% 
+  mutate(
+    sports_balls = NULL, 
+    sports_balls_i = as.integer(sports_balls))
+```
