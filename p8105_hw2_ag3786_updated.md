@@ -56,3 +56,77 @@ nyc_transit = read_csv(file = "./data/NYC_Transit_Data.csv") %>%
     ## )
 
     ## See spec(...) for full column specifications.
+
+This dataset contains information about the NYC subway stations, lines and routes served by them and whetehr they have options for vending or not or whether tehy are ADA compliant or not.
+
+I imported the csv using thr readr package and tehn cleaned using janitor package. Then, I used the dplyr package to select certain variables and mutate the entry variable from a character to a logical variable.
+
+There are 465 unique stations:
+
+``` r
+ nyc_transit %>% 
+  distinct(line, station_name) 
+```
+
+    ## # A tibble: 465 x 2
+    ##    line     station_name            
+    ##    <chr>    <chr>                   
+    ##  1 4 Avenue 25th St                 
+    ##  2 4 Avenue 36th St                 
+    ##  3 4 Avenue 45th St                 
+    ##  4 4 Avenue 53rd St                 
+    ##  5 4 Avenue 59th St                 
+    ##  6 4 Avenue 77th St                 
+    ##  7 4 Avenue 86th St                 
+    ##  8 4 Avenue 95th St                 
+    ##  9 4 Avenue 9th St                  
+    ## 10 4 Avenue Atlantic Av-Barclays Ctr
+    ## # ... with 455 more rows
+
+The number of stations that are ADA compliant are 468
+
+``` r
+count(nyc_transit, ada)
+```
+
+    ## # A tibble: 2 x 2
+    ##   ada       n
+    ##   <lgl> <int>
+    ## 1 FALSE  1400
+    ## 2 TRUE    468
+
+Reformatting the dataset:
+
+``` r
+nyc_transit_tidy = nyc_transit %>%
+  gather(key = "route_number", value = "route_name", route1:route11) %>%
+  select(route_name, route_number, everything()) %>% 
+  group_by(route_name, route_number) %>%
+  separate(route_number, into = c("route_str", "number"), sep = 5) %>% 
+  select(-route_str) 
+```
+
+The A train serves 60 distinct stations:
+
+``` r
+nyc_transit_tidy %>%
+  group_by(route_name) %>%
+  filter(route_name == "A") %>% 
+  distinct(route_name, line, station_name)
+```
+
+    ## # A tibble: 60 x 3
+    ## # Groups:   route_name [1]
+    ##    route_name line            station_name                 
+    ##    <chr>      <chr>           <chr>                        
+    ##  1 A          42nd St Shuttle Times Square                 
+    ##  2 A          8 Avenue        125th St                     
+    ##  3 A          8 Avenue        145th St                     
+    ##  4 A          8 Avenue        14th St                      
+    ##  5 A          8 Avenue        168th St - Washington Heights
+    ##  6 A          8 Avenue        175th St                     
+    ##  7 A          8 Avenue        181st St                     
+    ##  8 A          8 Avenue        190th St                     
+    ##  9 A          8 Avenue        34th St                      
+    ## 10 A          8 Avenue        42nd St                      
+    ## # ... with 50 more rows

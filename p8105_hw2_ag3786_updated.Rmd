@@ -30,3 +30,39 @@ nyc_transit = read_csv(file = "./data/NYC_Transit_Data.csv") %>%
   select(line, station_name, station_latitude, station_longitude, starts_with("route"), entry, vending, entrance_type, ada) %>% 
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE)) 
 ```
+
+This dataset contains information about the NYC subway stations, lines and routes served by them and whetehr they have options for vending or not or whether tehy are ADA compliant or not.
+
+I imported the csv using thr readr package and tehn cleaned using janitor package. Then, I used the dplyr package to select certain variables and mutate the entry variable from a character to a logical variable.
+
+There are 465 unique stations:
+
+```{r}
+ nyc_transit %>% 
+  distinct(line, station_name) 
+```
+
+The number of stations that are ADA compliant are 468 
+```{r}
+count(nyc_transit, ada)
+```
+
+Reformatting the dataset:
+
+```{r}
+nyc_transit_tidy = nyc_transit %>%
+  gather(key = "route_number", value = "route_name", route1:route11) %>%
+  select(route_name, route_number, everything()) %>% 
+  group_by(route_name, route_number) %>%
+  separate(route_number, into = c("route_str", "number"), sep = 5) %>% 
+  select(-route_str) 
+```
+
+The A train serves 60 distinct stations:
+
+```{r}
+nyc_transit_tidy %>%
+  group_by(route_name) %>%
+  filter(route_name == "A") %>% 
+  distinct(route_name, line, station_name)
+```
