@@ -79,3 +79,31 @@ trash_wheel = readxl::read_excel(path = "./data/HealthyHarborWaterWheelTotals201
     sports_balls = NULL, 
     sports_balls_i = as.integer(sports_balls))
 ```
+
+
+Median number of sportsballs in a dumpster in 2016 was `r trash_wheel %>% filter(year == 2016) %>% summarize(median_sportsballs_2016= median(sports_balls_i, na.rm = TRUE))`
+
+### *Importing and cleaning the sheet for 2016 precipitation data*
+```{r}
+ppt_2016 = readxl::read_excel(path = "./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 4, skip = 1) %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(month)) %>% 
+  mutate(year = 2016)
+```
+
+### *Importing and cleaning the sheet for 2017 precipitation data*
+```{r}
+ppt_2017 = readxl::read_excel(path = "./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 3, skip = 1) %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(total), !is.na(month)) %>% 
+  mutate(year = 2017)
+```
+
+### *Binding the rows to have a combined dataset and changing the month column from numbers to names*
+
+```{r}
+ppt_tidy = bind_rows(ppt_2016, ppt_2017) %>%
+  janitor::clean_names() %>%
+  select(year, everything()) %>% 
+  mutate(month =  month.name[month])
+```
