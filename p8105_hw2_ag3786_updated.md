@@ -183,6 +183,8 @@ library(p8105.datasets)
 data(brfss_smart2010)
 ```
 
+Cleaning, wrangling and tidying data:
+
 ``` r
 brfss = brfss_smart2010 %>% 
   janitor::clean_names() %>% 
@@ -193,3 +195,74 @@ brfss = brfss_smart2010 %>%
   janitor::clean_names() %>% 
   mutate(excellent_or_very_good = excellent + very_good)
 ```
+
+1.  Unique locations represented in the dataset are:
+
+``` r
+brfss %>% 
+  group_by(locationabbr) %>% summarise(count = n()) 
+```
+
+    ## # A tibble: 51 x 2
+    ##    locationabbr count
+    ##    <chr>        <int>
+    ##  1 AK              11
+    ##  2 AL              18
+    ##  3 AR              21
+    ##  4 AZ              32
+    ##  5 CA              52
+    ##  6 CO              59
+    ##  7 CT              47
+    ##  8 DC               9
+    ##  9 DE              27
+    ## 10 FL             122
+    ## # ... with 41 more rows
+
+This yields 51 unique locations. Every state is represented. New Jersey is represented the most with frequency of 146.
+
+1.  
+
+``` r
+brfss %>% 
+  group_by(year) %>% 
+  filter(year == 2002) %>% 
+  summarize(median = median(excellent, na.rm = TRUE))
+```
+
+    ## # A tibble: 1 x 2
+    ##    year median
+    ##   <int>  <dbl>
+    ## 1  2002   23.6
+
+For the year 2002, the median value for excellent response is 23.6.
+
+1.  Histogram
+
+``` r
+brfss %>% 
+  group_by(year) %>% 
+  filter(year == 2002) %>% 
+ggplot(aes(x = excellent)) + geom_histogram()
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 2 rows containing non-finite values (stat_bin).
+
+<img src="p8105_hw2_ag3786_updated_files/figure-markdown_github/unnamed-chunk-15-1.png" width="90%" />
+
+1.  Scatterplot
+
+``` r
+ brfss %>% 
+ filter(locationabbr == "NY") %>% 
+  separate(locationdesc, into = c("state", "county"), sep = "-") %>%
+  select(year, county, excellent) %>%
+  spread(key = "county", value = "excellent") %>%
+  janitor::clean_names() %>%
+  select(year, queens_county, new_york_county) %>%
+  ggplot(aes(x = new_york_county, y = queens_county)) + 
+  geom_point(aes(color = year))
+```
+
+<img src="p8105_hw2_ag3786_updated_files/figure-markdown_github/unnamed-chunk-16-1.png" width="90%" />

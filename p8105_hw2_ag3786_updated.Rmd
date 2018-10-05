@@ -119,6 +119,8 @@ library(p8105.datasets)
 data(brfss_smart2010)
 ```
 
+Cleaning, wrangling and tidying data:
+
 ```{r}
 brfss = brfss_smart2010 %>% 
   janitor::clean_names() %>% 
@@ -129,3 +131,45 @@ brfss = brfss_smart2010 %>%
   janitor::clean_names() %>% 
   mutate(excellent_or_very_good = excellent + very_good)
 ``` 
+
+(i) Unique locations represented in the dataset are:
+
+```{r}
+brfss %>% 
+  group_by(locationabbr) %>% summarise(count = n()) 
+```
+ 
+ This yields 51 unique locations. Every state is represented. New Jersey is represented the most with frequency of 146.
+ 
+ (ii)
+ 
+```{r}
+brfss %>% 
+  group_by(year) %>% 
+  filter(year == 2002) %>% 
+  summarize(median = median(excellent, na.rm = TRUE))
+```
+ For the year 2002, the median value for excellent response is 23.6.
+ 
+ (iii) Histogram
+ 
+```{r}
+brfss %>% 
+  group_by(year) %>% 
+  filter(year == 2002) %>% 
+ggplot(aes(x = excellent)) + geom_histogram()
+```
+ 
+ (iv) Scatterplot
+```{r}
+ brfss %>% 
+ filter(locationabbr == "NY") %>% 
+  separate(locationdesc, into = c("state", "county"), sep = "-") %>%
+  select(year, county, excellent) %>%
+  spread(key = "county", value = "excellent") %>%
+  janitor::clean_names() %>%
+  select(year, queens_county, new_york_county) %>%
+  ggplot(aes(x = new_york_county, y = queens_county)) + 
+  geom_point(aes(color = year))
+```
+ 
