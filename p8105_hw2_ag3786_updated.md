@@ -145,8 +145,6 @@ trash_wheel = readxl::read_excel(path = "./data/HealthyHarborWaterWheelTotals201
     sports_balls_i = as.integer(sports_balls))
 ```
 
-Median number of sportsballs in a dumpster in 2016 was 26
-
 ### *Importing and cleaning the sheet for 2016 precipitation data*
 
 ``` r
@@ -173,3 +171,5 @@ ppt_tidy = bind_rows(ppt_2016, ppt_2017) %>%
   select(year, everything()) %>% 
   mutate(month =  month.name[month])
 ```
+
+Mr. Trash Wheel is “a water-wheel vessel that removes trash from the Inner Harbor in Baltimore, Maryland.” It (or he) sits at an intake into the Inner Harbor and intercepts litter and debris carried by the Jones Falls River toward the harbor. It has removed over a million pounds of litter since May 2014! The total precipitation in 2017 was 29.93. The median number of sportsballs in a dumpster in 2016 was 26
