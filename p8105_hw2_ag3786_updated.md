@@ -59,7 +59,7 @@ nyc_transit = read_csv(file = "./data/NYC_Transit_Data.csv") %>%
 
 This dataset contains information about the NYC subway stations, lines and routes served by them and whetehr they have options for vending or not or whether tehy are ADA compliant or not.
 
-I imported the csv using thr readr package and tehn cleaned using janitor package. Then, I used the dplyr package to select certain variables and mutate the entry variable from a character to a logical variable.
+I imported the csv using thr readr package and then cleaned using janitor package. Then, I used the dplyr package to select certain variables and mutate the entry variable from a character to a logical variable.
 
 There are 465 unique stations:
 
@@ -173,3 +173,23 @@ ppt_tidy = bind_rows(ppt_2016, ppt_2017) %>%
 ```
 
 Mr. Trash Wheel is “a water-wheel vessel that removes trash from the Inner Harbor in Baltimore, Maryland.” It (or he) sits at an intake into the Inner Harbor and intercepts litter and debris carried by the Jones Falls River toward the harbor. It has removed over a million pounds of litter since May 2014! The total precipitation in 2017 was 29.93. The median number of sportsballs in a dumpster in 2016 was 26
+
+### Problem 3
+
+Loading the dataset
+
+``` r
+library(p8105.datasets)
+data(brfss_smart2010)
+```
+
+``` r
+brfss = brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(topic == "Overall Health") %>% 
+  select(-class, -topic, -question, -sample_size, -(confidence_limit_low:geo_location)) %>%
+  mutate(response = tolower(response)) %>% 
+  spread(key = "response", value = "data_value") %>% 
+  janitor::clean_names() %>% 
+  mutate(excellent_or_very_good = excellent + very_good)
+```
